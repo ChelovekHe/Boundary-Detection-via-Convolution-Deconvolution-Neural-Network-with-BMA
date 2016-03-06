@@ -4,9 +4,11 @@ path = 'train/';
 numfids = length(fnames);
 fid = fopen('train_label_flat.txt','wt');
 for K = 1:numfids
+  disp(fnames(K).name);
   groundT = load(strcat(path,fnames(K).name));
   grayimage_str = sprintf('%i,',groundT.groundTruth{1,1}.Boundaries);
   grayimage_str = grayimage_str(1:end-1);
   fprintf(fid, grayimage_str);
+  fprintf(fid, '\n');
 end
 fclose(fid);
