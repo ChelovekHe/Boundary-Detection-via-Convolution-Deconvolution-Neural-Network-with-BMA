@@ -7,10 +7,11 @@ import numpy
 import theano
 from theano import tensor as T
 from theano.tensor.nnet import conv
+import backend as K
 
 class ConvLayer(object):
 
-    def __init__(self, rng, input, filter_shape, image_shape):
+    def __init__(self, rng, input, filter_shape, image_shape,padding='valid'):
 
         assert image_shape[1] == filter_shape[1]
         self.input = input
@@ -29,11 +30,12 @@ class ConvLayer(object):
         b_values = numpy.zeros((filter_shape[0],), dtype=theano.config.floatX)
         self.b = theano.shared(value=b_values, borrow=True)
 
-        conv_out = conv.conv2d(
-            input=input,
-            filters=self.W,
+        conv_out = K.conv2d(
+            x=input,
+            kernel=self.W,
             filter_shape=filter_shape,
-            image_shape=image_shape
+            image_shape=image_shape,
+            border_mode=padding
         )
 
         self.output = T.tanh(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))

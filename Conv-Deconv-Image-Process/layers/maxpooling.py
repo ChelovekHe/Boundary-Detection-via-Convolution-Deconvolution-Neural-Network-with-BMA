@@ -7,6 +7,7 @@ from theano.tensor.signal import downsample
 import theano.tensor as T
 import numpy as np
 import theano
+from aetypes import end
 
 class MaxPooling(object):
     """Pool Layer of a convolutional network """
@@ -20,7 +21,7 @@ class MaxPooling(object):
         pooled_out = downsample.max_pool_2d(
             input=self.input,
             ds=self.poolsize,
-            ignore_border=False
+            ignore_border=self.ignore_border
         )
 
         s1 = self.poolsize[0]
@@ -32,12 +33,12 @@ class MaxPooling(object):
         mask = T.set_subtensor(mask[:,:,:shp[2],:shp[3]], input)
         mask = T.eq(mask,recovered)
 
-        self.mask = mask
+        self.mask = mask[:,:,:-1,:-1]
         self.input = input
 
-input = T.dtensor4('input')
-layer=MaxPooling(input)
-f= theano.function([input],layer.mask)
-X=np.random.rand(2,3,10,10)
-print X
-print f(X)
+# input = T.dtensor4('input')
+# layer=MaxPooling(input)
+# f= theano.function([input],layer.mask)
+# X=np.random.rand(2,3,10,10)
+# print X
+# print f(X)
