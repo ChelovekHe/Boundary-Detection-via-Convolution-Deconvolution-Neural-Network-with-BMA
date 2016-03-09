@@ -11,15 +11,18 @@ from theano.tensor.nnet import conv
 
 class ReverseMaxPooling(object):
     
-    def __init__(self, inputs, mask, poolsize=(2, 2), ignore_border=True):
-        self.input = inputs
+    def __init__(self, input, mask, poolsize=(2, 2), ignore_border=True):
+        self.input = input
         self.poolsize = poolsize
         self.ignore_border = ignore_border
         s1 = self.poolsize[0]
         s2 = self.poolsize[1]
         recovered= self.input.repeat(s1, axis=2).repeat(s2, axis=3)
-        output= recovered*mask
-        self.output=output[:,:,:-1,:-1]
+        if recovered.shape == mask.shape:            
+            output= recovered*mask
+        else:
+            output= recovered[:,:,:-1,:-1]*mask
+        self.output=output
         self.input = input
 
 # M=np.array([[[[1, 0, 0, 0, 0, 1, 0, 1, 0, 0],

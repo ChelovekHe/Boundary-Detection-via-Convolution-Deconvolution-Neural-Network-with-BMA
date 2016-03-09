@@ -76,59 +76,80 @@ class CDNN(object):
             n_out=layer9_input_shape,
             activation=T.tanh
         )
+         
+        self.layer10 = layers.HiddenLayer(
+            rng=rng,
+            input=self.layer9.output,
+            n_in=layer9_input_shape,
+            n_out=layer9_input_shape,
+            activation=T.tanh
+        )
+         
+        self.layer11_input = self.layer10.output.reshape((batch_size,10,31,21))
+         
+        self.layer11 = layers.ReverseMaxPooling(
+            input=self.layer11_input,
+            mask=self.layer8.mask,
+            poolsize=(2, 2)
+        )
+         
+        self.layer12 = layers.ConvLayer(
+            rng,
+            input=self.layer11.output,
+            image_shape=(batch_size, 10, 61, 41),
+            filter_shape=(10, 10, 3, 3),
+            padding='same'                                   
+        )
+         
+        self.layer13 = layers.ReverseMaxPooling(
+            input=self.layer12.output,
+            mask=self.layer6.mask,
+            poolsize=(2, 2)
+        )
         
-        self.prediction = self.layer9.output
-#         
-#         self.layer6 = layers.HiddenLayer(
-#             rng=rng,
-#             input=self.layer5.output,
-#             n_in=layer5_input_shape,
-#             n_out=layer5_input_shape,
-#             activation=T.tanh
-#         )
-#         
-#         self.layer7_input = self.layer6.output.reshape((batch_size,10,121,81))
-#         
-#         self.layer7 = layers.ReverseMaxPooling(
-#             input=self.layer7_input,
-#             mask=self.layer4.mask,
-#             poolsize=(2, 2)
-#         )
-#         
-#         self.layer8 = layers.ConvLayer(
-#             rng,
-#             input=self.layer7.output,
-#             image_shape=(batch_size, 10, 241, 161),
-#             filter_shape=(10, 10, 3, 3),                                   
-#         )
-#         
-#         self.layer9 = layers.ReverseMaxPooling(
-#             input=self.layer8.output,
-#             mask=self.layer2.mask,
-#             poolsize=(2, 2)
-#         )
-#         
-#         self.layer10 = layers.ConvLayer(
-#             rng,
-#             input=self.layer9.output,
-#             image_shape=(batch_size, 1, 241, 161),
-#             filter_shape=(1, 10, 3, 3),                                   
-#         )
-#         
-#         self.prediction=self.layer10.output
-#         
-# 
-#         # keep track of model input
-#         self.input = input
+        self.layer14 = layers.ConvLayer(
+            rng,
+            input=self.layer13.output,
+            image_shape=(batch_size, 10, 121, 81),
+            filter_shape=(5, 10, 3, 3),
+            padding='same'                                   
+        )
+         
+        self.layer15 = layers.ReverseMaxPooling(
+            input=self.layer14.output,
+            mask=self.layer4.mask,
+            poolsize=(2, 2)
+        )
+        
+        self.layer16 = layers.ConvLayer(
+            rng,
+            input=self.layer15.output,
+            image_shape=(batch_size, 5, 241, 161),
+            filter_shape=(1, 5, 3, 3),
+            padding='same'                                   
+        )
+         
+        self.layer17 = layers.ReverseMaxPooling(
+            input=self.layer16.output,
+            mask=self.layer4.mask,
+            poolsize=(2, 2)
+        )
+        
+        self.layer18 = layers.ConvLayer(
+            rng,
+            input=self.layer17.output,
+            image_shape=(batch_size, 1, 481, 321),
+            filter_shape=(1, 5, 3, 3),
+            padding='same'                                   
+        )
+        
+        self.prediction = self.layer17.output
+        self.input = input
 
 
 files='data/images/train'
 images,rotated=F.loadImage(files)
 images=numpy.transpose(images, (0,3,1,2))
-for x in images:
-    print x.shape
-for x in rotated:
-    print x
 
 images=images.astype('float32')    
 inputs = T.ftensor4('input')
