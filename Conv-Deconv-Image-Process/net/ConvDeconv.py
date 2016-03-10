@@ -139,11 +139,11 @@ class CDNN(object):
             rng,
             input=self.layer17.output,
             image_shape=(batch_size, 1, 481, 321),
-            filter_shape=(1, 5, 3, 3),
+            filter_shape=(1, 1, 3, 3),
             padding='same'                                   
         )
         
-        self.prediction = self.layer17.output
+        self.prediction = self.layer15.output
         self.input = input
 
 
