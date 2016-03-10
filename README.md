@@ -39,4 +39,7 @@ Network Class Updated[03-08-2016]
 1. Convolution task can be worked on our code now
 
 2. Added Keras Backend. Now the convolution layer can accept padding!!!! 
-2. 
+
+Accelerated version of Code[03-09-2016]
+
+1. The code is able to run on GPU now! Max pooling and reverse pooling can run fast enough when training!
