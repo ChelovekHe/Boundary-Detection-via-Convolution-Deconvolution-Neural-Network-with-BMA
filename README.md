@@ -58,3 +58,4 @@ Complete training and evaluating[03-10-2016]
 
 Bug Free Code!!!Yeah!![03-10-2016]
 1. The code is fully functional and without any bug. Training and testing result seems encouraging!
+![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/Console.png)
