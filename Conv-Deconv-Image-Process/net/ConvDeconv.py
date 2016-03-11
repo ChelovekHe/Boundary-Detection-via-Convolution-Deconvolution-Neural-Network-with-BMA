@@ -168,10 +168,11 @@ class CDNN(object):
             input=remax1.output,
             image_shape=(batch_size, 10, 480, 320),
             filter_shape=(1, 10, 3, 3),
-            padding='same'                                   
+            padding='same',
+            activation=T.nnet.sigmoid                                   
         )
          
-        self.y_pred = deconv1.output
+        self.y_pred=deconv1.output
         self.params=conv1.params+conv2.params+conv3.params+conv4.params+conv5.params+\
             deconv5.params+deconv4.params+deconv3.params+deconv2.params+deconv1.params   
         self.input = input
@@ -185,12 +186,16 @@ class CDNN(object):
         return T.nnet.binary_crossentropy(self.y_pred, y).mean()
     
     def errors(self, y):
-        if y.ndim != self.y_pred.ndim:
+        idxs=(self.y_pred<0.5).nonzero()
+        y_reg_pred=T.set_subtensor(self.y_pred[idxs], 0)
+        idxs=(y_reg_pred>=0.5).nonzero()
+        y_reg_pred=T.set_subtensor(y_reg_pred[idxs], 1)
+        if y.ndim != y_reg_pred.ndim:
             raise TypeError(
                 'y should have the same shape as self.y_pred',
-                ('y', y.type, 'y_pred', self.y_pred.type)
+                ('y', y.type, 'y_pred', y_reg_pred.type)
             )
-        return T.mean(T.neq(self.y_pred, y))
+        return T.mean(T.neq(y_reg_pred, y))
 
 
 
@@ -207,5 +212,5 @@ class CDNN(object):
 #         input=inputs.dimshuffle((0, 3, 1, 2))
 #     )
 # f= theano.function([inputs],classifier.y_pred)
-#        
+#         
 # print f(images[:2]).shape

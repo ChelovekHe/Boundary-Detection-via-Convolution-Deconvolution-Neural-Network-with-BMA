@@ -10,7 +10,7 @@ import backend as K
 
 class ConvLayer(object):
 
-    def __init__(self, rng, input, filter_shape, image_shape,padding='valid'):
+    def __init__(self, rng, input, filter_shape, image_shape,padding='valid',activation=T.nnet.relu):
 
         assert image_shape[1] == filter_shape[1]
         self.input = input
@@ -37,7 +37,7 @@ class ConvLayer(object):
             border_mode=padding
         )
 
-        self.output = T.nnet.relu(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+        self.output = activation(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
         self.params = [self.W, self.b]
         self.input = input
 

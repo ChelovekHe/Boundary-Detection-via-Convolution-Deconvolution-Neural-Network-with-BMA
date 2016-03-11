@@ -25,13 +25,13 @@ def reshapeLables(data, rotate):
 # # for x in images:
 # #     print x.shape
 # print rotated
-# 
+#  
 # filename='data/groundTruth/train_label_flat.txt'
 # data=loadGroundTruth(filename)
 # print len(data[1])
 # print len(data[2])
 # print len(data)   
-# 
+#  
 # newlabels=reshapeLables(data, rotated)
 # print newlabels[1].shape
     

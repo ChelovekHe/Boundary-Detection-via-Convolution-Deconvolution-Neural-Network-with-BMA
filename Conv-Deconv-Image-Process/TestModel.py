@@ -88,7 +88,6 @@ def ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10):
     ###############
     print('... training')
 
-    # early-stopping parameters
     patience = 10000  
     patience_increase = 2  
     improvement_threshold = 0.995  
