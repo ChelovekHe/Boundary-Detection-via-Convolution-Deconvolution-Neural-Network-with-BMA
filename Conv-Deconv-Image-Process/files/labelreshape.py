@@ -11,25 +11,27 @@ def reshapeLables(data, rotate):
     newdata = []
     for idx,x in enumerate(data):
         if rotate[idx] == 0:
-            x=x.reshape((481, 321))
+            x=x.reshape((481, 321, 1))
         else:
-            x=x.reshape((321, 481))
+            x=x.reshape((321, 481, 1))
             x=np.rot90(x)
-        newdata.append(x)
+        newdata.append(x[:-1,:-1,:])
+        print idx*1.0/len(data)*100,"% percent reshape complete         \r",
+    print ""
     return np.array(newdata)
 
-image_files='data/images/train'
-images,rotated=loadImage(image_files)
-# for x in images:
-#     print x.shape
-print rotated
-
-filename='data/groundTruth/train_label_flat.txt'
-data=loadGroundTruth(filename)
-print len(data[1])
-print len(data[2])
-print len(data)   
-
-newlabels=reshapeLables(data, rotated)
-print newlabels[1].shape
+# image_files='data/images/train'
+# images,rotated=loadImage(image_files)
+# # for x in images:
+# #     print x.shape
+# print rotated
+# 
+# filename='data/groundTruth/train_label_flat.txt'
+# data=loadGroundTruth(filename)
+# print len(data[1])
+# print len(data[2])
+# print len(data)   
+# 
+# newlabels=reshapeLables(data, rotated)
+# print newlabels[1].shape
     

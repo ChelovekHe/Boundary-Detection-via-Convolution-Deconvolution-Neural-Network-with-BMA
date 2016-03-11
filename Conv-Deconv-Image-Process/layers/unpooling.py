@@ -6,7 +6,7 @@ Created on Mar 7, 2016
 
 import numpy as np
 import theano
-from theano.tensor.signal import downsample
+from theano.tensor.signal import pool
 from theano import tensor as T
 from theano.tensor.nnet import conv
 
@@ -17,10 +17,11 @@ class ReverseMaxPooling(object):
         self.poolsize = poolsize
         self.ignore_border = ignore_border
         
-        mask_pooled_out = downsample.max_pool_2d(
+        mask_pooled_out = pool.pool_2d(
             input=mask,
             ds=self.poolsize,
-            ignore_border=self.ignore_border
+            ignore_border=self.ignore_border,
+            mode='max'
         )
         
         self.output = T.grad(None, wrt=mask, known_grads={mask_pooled_out: input})

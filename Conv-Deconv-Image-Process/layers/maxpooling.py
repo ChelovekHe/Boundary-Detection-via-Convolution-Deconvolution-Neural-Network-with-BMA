@@ -3,7 +3,7 @@ Created on Mar 7, 2016
 
 @author: Wuga
 '''
-from theano.tensor.signal import downsample
+from theano.tensor.signal import pool
 import theano.tensor as T
 import numpy as np
 import theano
@@ -17,10 +17,11 @@ class MaxPooling(object):
         self.poolsize = poolsize
         self.ignore_border = ignore_border
 
-        pooled_out = downsample.max_pool_2d(
+        pooled_out = pool.pool_2d(
             input=self.input,
             ds=self.poolsize,
-            ignore_border=self.ignore_border
+            ignore_border=self.ignore_border,
+            mode='max'
         )
         self.output = pooled_out
         self.mask = T.grad(None, wrt=self.input, known_grads={pooled_out: T.ones_like(pooled_out)})

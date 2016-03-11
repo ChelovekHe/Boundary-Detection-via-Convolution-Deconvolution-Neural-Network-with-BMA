@@ -28,8 +28,9 @@ def loadImage(files):
             rotated.append(1)
         else:
             rotated.append(0)
-        images.append(img_arr) # 640x480x3 array
-        print idx*1.0/len(onlyfiles)*100," percent complete         \r",
+        images.append(img_arr[:-1,:-1,:]) # 640x480x3 array
+        print idx*1.0/len(onlyfiles)*100,"% percent image loading complete         \r",
+    print ""
     return images,rotated
 
 # files='data/images/train'

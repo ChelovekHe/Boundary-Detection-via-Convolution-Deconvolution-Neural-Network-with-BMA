@@ -6,7 +6,6 @@ Created on Mar 7, 2016
 import numpy
 import theano
 from theano import tensor as T
-from theano.tensor.nnet import conv
 import backend as K
 
 class ConvLayer(object):
@@ -38,7 +37,7 @@ class ConvLayer(object):
             border_mode=padding
         )
 
-        self.output = T.tanh(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+        self.output = T.nnet.relu(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
         self.params = [self.W, self.b]
         self.input = input
 

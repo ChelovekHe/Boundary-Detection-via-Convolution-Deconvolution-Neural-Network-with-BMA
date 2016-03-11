@@ -14,151 +14,198 @@ class CDNN(object):
 
     def __init__(self, rng, batch_size, input):
         
-        self.layer1 = layers.ConvLayer(
+        
+        conv1 = layers.ConvLayer(
             rng,
             input=input,
-            image_shape=(batch_size, 3, 481, 321),
+            image_shape=(batch_size, 3, 480, 320),
             filter_shape=(10, 3, 3, 3),  
             padding='same'                                  
         )
         
-        self.layer2 = layers.MaxPooling(
-            input=self.layer1.output,
+        maxp1 = layers.MaxPooling(
+            input=conv1.output,
             poolsize=(2, 2)                          
         )
-        
-        self.layer3 = layers.ConvLayer(
-            rng,
-            input=self.layer2.output,
-            image_shape=(batch_size, 10, 241, 161),
-            filter_shape=(10, 10, 3, 3), 
-            padding='same'                                  
-        )
-          
-        self.layer4 = layers.MaxPooling(
-            input=self.layer3.output,
-            poolsize=(2, 2)                           
-        )
-        
-        self.layer5 = layers.ConvLayer(
-            rng,
-            input=self.layer4.output,
-            image_shape=(batch_size, 10, 121, 81),
-            filter_shape=(10, 10, 3, 3), 
-            padding='same'                                  
-        )
-          
-        self.layer6 = layers.MaxPooling(
-            input=self.layer5.output,
-            poolsize=(2, 2)                           
-        )
-        
-        self.layer7 = layers.ConvLayer(
-            rng,
-            input=self.layer6.output,
-            image_shape=(batch_size, 10, 61, 41),
-            filter_shape=(10, 10, 3, 3), 
-            padding='same'                                  
-        )
-          
-        self.layer8 = layers.MaxPooling(
-            input=self.layer7.output,
-            poolsize=(2, 2)                           
-        )
-        
-        layer9_input = self.layer8.output.flatten()
-        layer9_input_shape = batch_size*10*31*21
          
-        self.layer9 = layers.HiddenLayer(
+        conv2 = layers.ConvLayer(
+            rng,
+            input=maxp1.output,
+            image_shape=(batch_size, 10, 240, 160),
+            filter_shape=(10, 10, 3, 3), 
+            padding='same'                                  
+        )
+           
+        maxp2 = layers.MaxPooling(
+            input=conv2.output,
+            poolsize=(2, 2)                           
+        )
+         
+        conv3 = layers.ConvLayer(
+            rng,
+            input=maxp2.output,
+            image_shape=(batch_size, 10, 120, 80),
+            filter_shape=(10, 10, 3, 3), 
+            padding='same'                                  
+        )
+           
+        maxp3 = layers.MaxPooling(
+            input=conv3.output,
+            poolsize=(2, 2)                           
+        )
+         
+        conv4 = layers.ConvLayer(
+            rng,
+            input=maxp3.output,
+            image_shape=(batch_size, 10, 60, 40),
+            filter_shape=(10, 10, 3, 3), 
+            padding='same'                                  
+        )
+           
+        maxp4 = layers.MaxPooling(
+            input=conv4.output,
+            poolsize=(2, 2)                           
+        )
+         
+        conv5 = layers.ConvLayer(
+            rng,
+            input=maxp4.output,
+            image_shape=(batch_size, 10, 30, 20),
+            filter_shape=(10, 10, 3, 3), 
+            padding='same'                                  
+        )
+           
+        maxp5 = layers.MaxPooling(
+            input=conv5.output,
+            poolsize=(2, 2)                           
+        )
+         
+        flat1_input = maxp5.output.flatten()
+        flat1_shape = batch_size*10*15*10
+          
+        flat1 = layers.HiddenLayer(
             rng=rng,
-            input=layer9_input,
-            n_in=layer9_input_shape,
-            n_out=layer9_input_shape,
-            activation=T.tanh
+            input=flat1_input,
+            n_in=flat1_shape,
+            n_out=flat1_shape,
+            activation=T.nnet.relu
         )
-         
-        self.layer10 = layers.HiddenLayer(
+          
+        flat2 = layers.HiddenLayer(
             rng=rng,
-            input=self.layer9.output,
-            n_in=layer9_input_shape,
-            n_out=layer9_input_shape,
-            activation=T.tanh
+            input=flat1.output,
+            n_in=flat1_shape,
+            n_out=flat1_shape,
+            activation=T.nnet.relu
         )
+          
+        remax5_input = flat2.output.reshape((batch_size,10,15,10))
          
-        self.layer11_input = self.layer10.output.reshape((batch_size,10,31,21))
-         
-        self.layer11 = layers.ReverseMaxPooling(
-            input=self.layer11_input,
-            mask=self.layer8.mask,
+        remax5 = layers.ReverseMaxPooling(
+            input=remax5_input,
+            mask=maxp5.mask,
             poolsize=(2, 2)
         )
-         
-        self.layer12 = layers.ConvLayer(
+          
+        deconv5 = layers.ConvLayer(
             rng,
-            input=self.layer11.output,
-            image_shape=(batch_size, 10, 61, 41),
+            input=remax5.output,
+            image_shape=(batch_size, 10, 30, 20),
             filter_shape=(10, 10, 3, 3),
             padding='same'                                   
         )
-         
-        self.layer13 = layers.ReverseMaxPooling(
-            input=self.layer12.output,
-            mask=self.layer6.mask,
+          
+        remax4 = layers.ReverseMaxPooling(
+            input=deconv5.output,
+            mask=maxp4.mask,
             poolsize=(2, 2)
         )
-        
-        self.layer14 = layers.ConvLayer(
+          
+        deconv4 = layers.ConvLayer(
             rng,
-            input=self.layer13.output,
-            image_shape=(batch_size, 10, 121, 81),
-            filter_shape=(5, 10, 3, 3),
+            input=remax4.output,
+            image_shape=(batch_size, 10, 60, 40),
+            filter_shape=(10, 10, 3, 3),
+            padding='same'                                   
+        )
+          
+        remax3 = layers.ReverseMaxPooling(
+            input=deconv4.output,
+            mask=maxp3.mask,
+            poolsize=(2, 2)
+        )
+         
+        deconv3 = layers.ConvLayer(
+            rng,
+            input=remax3.output,
+            image_shape=(batch_size, 10, 120, 80),
+            filter_shape=(10, 10, 3, 3),
+            padding='same'                                   
+        )
+          
+        remax2 = layers.ReverseMaxPooling(
+            input=deconv3.output,
+            mask=maxp2.mask,
+            poolsize=(2, 2)
+        )
+         
+        deconv2 = layers.ConvLayer(
+            rng,
+            input=remax2.output,
+            image_shape=(batch_size, 10, 240, 160),
+            filter_shape=(10, 10, 3, 3),
+            padding='same'                                   
+        )
+          
+        remax1 = layers.ReverseMaxPooling(
+            input=deconv2.output,
+            mask=maxp1.mask,
+            poolsize=(2, 2)
+        )
+         
+        deconv1 = layers.ConvLayer(
+            rng,
+            input=remax1.output,
+            image_shape=(batch_size, 10, 480, 320),
+            filter_shape=(1, 10, 3, 3),
             padding='same'                                   
         )
          
-        self.layer15 = layers.ReverseMaxPooling(
-            input=self.layer14.output,
-            mask=self.layer4.mask,
-            poolsize=(2, 2)
-        )
-        
-        self.layer16 = layers.ConvLayer(
-            rng,
-            input=self.layer15.output,
-            image_shape=(batch_size, 5, 241, 161),
-            filter_shape=(1, 5, 3, 3),
-            padding='same'                                   
-        )
-         
-        self.layer17 = layers.ReverseMaxPooling(
-            input=self.layer16.output,
-            mask=self.layer4.mask,
-            poolsize=(2, 2)
-        )
-        
-        self.layer18 = layers.ConvLayer(
-            rng,
-            input=self.layer17.output,
-            image_shape=(batch_size, 1, 481, 321),
-            filter_shape=(1, 1, 3, 3),
-            padding='same'                                   
-        )
-        
-        self.prediction = self.layer15.output
+        self.y_pred = deconv1.output
+        self.params=conv1.params+conv2.params+conv3.params+conv4.params+conv5.params+\
+            deconv5.params+deconv4.params+deconv3.params+deconv2.params+deconv1.params   
         self.input = input
-
-
-files='data/images/train'
-images,rotated=F.loadImage(files)
-images=numpy.transpose(images, (0,3,1,2))
-
-images=images.astype('float32')    
-inputs = T.ftensor4('input')
-rng = numpy.random.RandomState(1234)
-classifier = CDNN(
-        rng=rng,
-        batch_size=1,
-        input=inputs
-    )
-f= theano.function([inputs],classifier.prediction)
+        
+    def BinaryCrossEntroy(self,y):
+        if y.ndim != self.y_pred.ndim:
+            raise TypeError(
+                'y should have the same shape as self.y_pred',
+                ('y', y.type, 'y_pred', self.y_pred.type)
+            )
+        return T.nnet.binary_crossentropy(self.y_pred, y).mean()
     
-print f(images[:1]).shape
+    def errors(self, y):
+        if y.ndim != self.y_pred.ndim:
+            raise TypeError(
+                'y should have the same shape as self.y_pred',
+                ('y', y.type, 'y_pred', self.y_pred.type)
+            )
+        return T.mean(T.neq(self.y_pred, y))
+
+
+
+# files='data/images/train'
+# images,rotated=F.loadImage(files)
+# images=numpy.array(images)
+# print images.shape
+# images=images.astype('float32')    
+# inputs = T.ftensor4('input')
+# rng = numpy.random.RandomState(1234)
+# classifier = CDNN(
+#         rng=rng,
+#         batch_size=2,
+#         input=inputs.dimshuffle((0, 3, 1, 2))
+#     )
+# f= theano.function([inputs],classifier.y_pred)
+#        
+# print f(images[:2]).shape
