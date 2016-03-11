@@ -55,3 +55,6 @@ Complete training and evaluating[03-10-2016]
 4. Backpropagation works, but the error function may has some glitches... Always show 100% error
 
 5. Code can run on Pelican server now
+
+Bug Free Code!!!Yeah!![03-10-2016]
+1. The code is fully functional and without any bug. Training and testing result seems encouraging!
