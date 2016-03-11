@@ -43,3 +43,15 @@ Network Class Updated[03-08-2016]
 Accelerated version of Code[03-09-2016]
 
 1. The code is able to run on GPU now! Max pooling and reverse pooling can run fast enough when training!
+
+Complete training and evaluating[03-10-2016]
+
+1. Forward Propagation works
+
+2. Loss function works(binary cross entropy)
+
+3. Data now in cPickle format(easier to load in correct shape)
+
+4. Backpropagation works, but the error function may has some glitches... Always show 100% error
+
+5. Code can run on Pelican server now
