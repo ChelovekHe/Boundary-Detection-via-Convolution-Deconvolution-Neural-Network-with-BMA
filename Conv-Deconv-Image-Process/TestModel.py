@@ -1,3 +1,10 @@
+'''
+Created on Mar 5, 2016
+
+This code is one extension of theano sample code
+
+@author: Wuga
+'''
 import numpy
 import theano
 import theano.tensor as T
@@ -5,8 +12,25 @@ import layers
 import files as F
 from net import CDNN
 import timeit
+import cPickle
+from PIL import Image 
 
-def ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10):
+def ModelTester(learning_rate=0.01, n_epochs=100, batch_size=40):
+    """
+    The function test the proposed model on BSDS500 dataset in pickle format
+    (Data transform code is available in files folder of this package)
+    
+    This function will also train and save best model!
+
+    :type learning_rate: float type
+    :param learning_rate: gradient descent learning rate
+    
+    :type n_epochs: integer type
+    :param n_epochs: number of epochs to run
+    
+    :type batch_size: integer type
+    :param batch_size: size of data in each loop of gradient decent
+    """
     
     datasets = F.loadPickleData('data.save')
     train_set_x, train_set_y = datasets[0]
@@ -53,6 +77,15 @@ def ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10):
             y: test_set_y[index * batch_size:(index + 1) * batch_size]
         }
     )
+    
+    test_cost_model = theano.function(
+        inputs=[index],
+        outputs=classifier.BinaryCrossEntroy(y),
+        givens={
+            x: test_set_x[index * batch_size:(index + 1) * batch_size],
+            y: test_set_y[index * batch_size:(index + 1) * batch_size]
+        }
+    )
 
     validate_model = theano.function(
         inputs=[index],
@@ -62,6 +95,34 @@ def ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10):
             y: valid_set_y[index * batch_size:(index + 1) * batch_size]
         }
     )
+    
+    validate_cost_model = theano.function(
+        inputs=[index],
+        outputs=classifier.BinaryCrossEntroy(y),
+        givens={
+            x: valid_set_x[index * batch_size:(index + 1) * batch_size],
+            y: valid_set_y[index * batch_size:(index + 1) * batch_size]
+        }
+    )
+    
+    train_cost_model = theano.function(
+        inputs=[index],
+        outputs=classifier.BinaryCrossEntroy(y),
+        givens={
+            x: train_set_x[index * batch_size:(index + 1) * batch_size],
+            y: train_set_y[index * batch_size:(index + 1) * batch_size]
+        }
+    )
+    
+    train_error_model = theano.function(
+        inputs=[index],
+        outputs=classifier.errors(y),
+        givens={
+            x: train_set_x[index * batch_size:(index + 1) * batch_size],
+            y: train_set_y[index * batch_size:(index + 1) * batch_size]
+        }
+    )
+    
     
     gparams = [T.grad(cost, param) for param in classifier.params]
 
@@ -88,13 +149,8 @@ def ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10):
     ###############
     print('... training')
 
-    patience = 10000  
-    patience_increase = 2  
-    improvement_threshold = 0.995  
+    patience = 10000   
     validation_frequency = min(n_train_batches, patience // 2)
-    best_validation_loss = numpy.inf
-    best_iter = 0
-    test_score = 0.
     start_time = timeit.default_timer()
 
     epoch = 0
@@ -109,46 +165,57 @@ def ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10):
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
             if (iter + 1) % validation_frequency == 0:
-                # compute zero-one loss on validation set
-                validation_losses = [validate_model(i) for i
-                                     in range(n_valid_batches)]
-                this_validation_loss = numpy.mean(validation_losses)
+                train_losses = [train_error_model(i) for i
+                                     in range(n_train_batches)]
+                this_train_losses = numpy.mean(train_losses)
+                
+                train_cost = [train_cost_model(i) for i
+                                     in range(n_train_batches)]
+                this_train_cost = numpy.mean(train_cost)
 
                 print(
-                    'epoch %i, minibatch %i/%i, validation error %f %%' %
+                    'epoch %i, minibatch %i/%i, train error %f %%, train cost %f %%' %
                     (
                         epoch,
                         minibatch_index + 1,
                         n_train_batches,
-                        this_validation_loss * 100.
+                        this_train_losses *100,
+                        this_train_cost * 100.
                     )
                 )
-
-                # if we got the best validation score until now
-                if this_validation_loss < best_validation_loss:
-                    #improve patience if loss improvement is good enough
-                    if (
-                        this_validation_loss < best_validation_loss *
-                        improvement_threshold
-                    ):
-                        patience = max(patience, iter * patience_increase)
-
-                    best_validation_loss = this_validation_loss
-                    best_iter = iter
-
-                    # test it on the test set
-                    test_losses = [test_model(i) for i
-                                   in range(n_test_batches)]
-                    test_score = numpy.mean(test_losses)
-
-                    print(('     epoch %i, minibatch %i/%i, test error of '
-                           'best model %f %%') %
-                          (epoch, minibatch_index + 1, n_train_batches,
-                           test_score * 100.))
 
             if patience <= iter:
                 done_looping = True
                 break
     end_time = timeit.default_timer()
     
-ModelTester(learning_rate=0.01, n_epochs=1000, batch_size=10)
+    # compile a predictor function
+    predict_model = theano.function(
+        inputs=[classifier.input],
+        outputs=classifier.y_pred)
+    test_set_x = test_set_x.eval()
+    predicted_values = predict_model(test_set_x[:5])
+    print("Predicted values for the first 10 examples in test set:")
+    print (predicted_values[0].reshape((480,320))*255).astype(numpy.uint8)
+    for idx,I in enumerate(predicted_values):
+        I8 = (I.reshape((480,320)) * 255).astype(numpy.uint8)
+        rgbArray = numpy.zeros((480,320,3), 'uint8')
+        rgbArray[..., 0] = I8
+        rgbArray[..., 1] = I8
+        rgbArray[..., 2] = I8
+        img = Image.fromarray(rgbArray)
+        img.save(str(idx)+'myimg.jpeg')
+    predicted_values = predict_model(test_set_x[5:10])
+    print("Predicted values for the first 10 examples in test set:")
+    print (predicted_values[0].reshape((480,320))*255).astype(numpy.uint8)
+    for idx,I in enumerate(predicted_values):
+        I8 = (I.reshape((480,320)) * 255).astype(numpy.uint8)
+        rgbArray = numpy.zeros((480,320,3), 'uint8')
+        rgbArray[..., 0] = I8
+        rgbArray[..., 1] = I8
+        rgbArray[..., 2] = I8
+        img = Image.fromarray(rgbArray)
+        img.save(str(idx)+'myimg.jpeg')
+
+    
+ModelTester(learning_rate=0.1, n_epochs=200, batch_size=5)

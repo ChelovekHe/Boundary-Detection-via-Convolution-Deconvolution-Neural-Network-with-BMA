@@ -10,7 +10,7 @@ import backend as K
 
 class ConvLayer(object):
 
-    def __init__(self, rng, input, filter_shape, image_shape,padding='valid',activation=T.nnet.relu):
+    def __init__(self, rng, input, filter_shape, image_shape, W=None, bias=False, padding='valid',activation=T.nnet.relu):
 
         assert image_shape[1] == filter_shape[1]
         self.input = input
@@ -18,16 +18,15 @@ class ConvLayer(object):
         fan_out = (filter_shape[0] * numpy.prod(filter_shape[2:]))
         # initialize weights with random weights
         W_bound = numpy.sqrt(6. / (fan_in + fan_out))
-        self.W = theano.shared(
-            numpy.asarray(
-                rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
-                dtype=theano.config.floatX
-            ),
-            borrow=True
-        )
-
-        b_values = numpy.zeros((filter_shape[0],), dtype=theano.config.floatX)
-        self.b = theano.shared(value=b_values, borrow=True)
+        if W==None:
+            W = theano.shared(
+                numpy.asarray(
+                    rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
+                    dtype=theano.config.floatX
+                ),
+                borrow=True
+            )
+        self.W =W
 
         conv_out = K.conv2d(
             x=input,
@@ -36,8 +35,14 @@ class ConvLayer(object):
             image_shape=image_shape,
             border_mode=padding
         )
-
-        self.output = activation(conv_out + self.b.dimshuffle('x', 0, 'x', 'x'))
-        self.params = [self.W, self.b]
+        
+        if bias==True:
+            b_values = numpy.zeros((filter_shape[0],), dtype=theano.config.floatX)
+            self.b = theano.shared(value=b_values, borrow=True)
+            self.output = self.output = T.clip(activation(conv_out + self.b.dimshuffle('x', 0, 'x', 'x')), 0.001, 0.999)
+            self.params = [self.W, self.b]
+        else:
+            self.output = T.clip(activation(conv_out), 0.001, 0.999)
+            self.params = [self.W]
         self.input = input
 

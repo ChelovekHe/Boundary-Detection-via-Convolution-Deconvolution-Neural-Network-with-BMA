@@ -11,7 +11,24 @@ from theano import tensor as T
 from theano.tensor.nnet import conv
 
 class ReverseMaxPooling(object):
+    '''
+    :type rng: numpy.random.RandomState
+    :param rng: a random number generator used to initialize weights
     
+    :type input: theano.tensor.dtensor4
+    :param input: symbolic variable that describes the input of the
+    architecture (one minibatch)
+    
+    :type mask: theano.tensor.dtensor4
+    :param mask: symbolic variable that describes the input of the
+    architecture (one minibatch)
+    
+    :type poolsize: tuple(int,int)
+    :param poolsize: pooling size of max pooling
+    
+    :type ignore_border: boolean
+    :param ignore_border: ignore border pixels when doing max pooling
+    '''
     def __init__(self, input, mask, poolsize=(2, 2), ignore_border=True):
         self.input = input
         self.poolsize = poolsize
@@ -24,16 +41,14 @@ class ReverseMaxPooling(object):
             mode='max'
         )
         
+        #Use symbolic programming property to reshape layers with mask 
+        #and maxpooled  layer
         self.output = T.grad(None, wrt=mask, known_grads={mask_pooled_out: input})
-#         s1 = self.poolsize[0]
-#         s2 = self.poolsize[1]
-#         recovered= self.input.repeat(s1, axis=2).repeat(s2, axis=3)
-#         if recovered.shape == mask.shape:            
-#             output= recovered#*mask
-#         else:
-#             output= recovered[:,:,:-1,:-1]#*mask
-#         self.output=output
         self.input = input
+        
+    ######################
+    # Function Test code #
+    ######################
 
 # M=np.array([[[[1, 0, 0, 0, 0, 1, 0, 1, 0, 0],
 # [0, 0, 0, 1, 0, 0, 0, 0, 1, 0],

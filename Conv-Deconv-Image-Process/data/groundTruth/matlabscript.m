@@ -1,14 +1,12 @@
-fnames = dir('train/*.mat');
-delete('train_label_flat.txt');
-path = 'train/';
+fnames = dir('val/*.mat');
+delete('val_label_flat.txt');
+path = 'val/';
 numfids = length(fnames);
-fid = fopen('train_label_flat.txt','wt');
+pattern = '.mat';
+replacement = '';
 for K = 1:numfids
   disp(fnames(K).name);
+  filename = strcat(path,regexprep(fnames(K).name,pattern,replacement),'.csv');
   groundT = load(strcat(path,fnames(K).name));
-  grayimage_str = sprintf('%i,',groundT.groundTruth{1,1}.Boundaries);
-  grayimage_str = grayimage_str(1:end-1);
-  fprintf(fid, grayimage_str);
-  fprintf(fid, '\n');
+  dlmwrite(filename,groundT.groundTruth{1,1}.Boundaries)
 end
-fclose(fid);

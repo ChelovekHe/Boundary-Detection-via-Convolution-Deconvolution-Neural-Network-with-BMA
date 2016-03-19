@@ -10,6 +10,25 @@ import theano
 import theano.tensor as T
 
 class HiddenLayer(object):
+    """
+    :type rng: numpy.random.RandomState
+    :param rng: a random number generator used to initialize weights
+
+    :type input: theano.tensor.TensorType
+    :param input: symbolic variable that describes the input of the
+    architecture (one minibatch)
+
+    :type n_in: int
+    :param n_in: number of input units, the dimension of the space in
+    which the datapoints lie
+
+    :type n_hidden: int
+    :param n_hidden: number of hidden units
+
+    :type n_out: int
+    :param n_out: number of output units, the dimension of the space in
+    which the labels lie
+    """
     def __init__(self, rng, input, n_in, n_out, W=None, b=None,
                  activation=T.tanh):
         self.input = input

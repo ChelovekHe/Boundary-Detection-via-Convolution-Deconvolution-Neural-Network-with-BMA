@@ -11,6 +11,13 @@ import numpy as np
 import sys
 
 def loadImage(files):
+    """
+    Load all images in given folder and transform them into numpy.array (3D)
+    Rotate images that is in vertical format
+
+    :type files: string type
+    :param path of the folder
+    """
     datapath=files
     script_dir = os.path.dirname(__file__)
     abs_data_path = os.path.join(script_dir,'..',datapath)
@@ -32,6 +39,10 @@ def loadImage(files):
         print idx*1.0/len(onlyfiles)*100,"% percent image loading complete         \r",
     print ""
     return images,rotated
+
+    ######################
+    # Function Test code #
+    ######################
 
 # files='data/images/train'
 # images,rotated=loadImage(files)
