@@ -22,7 +22,17 @@ System Requirement
 ===
 You need to install Theano and Cuda, that is all
 
+Contact
+===
+Ga Wu
+[email](wug2@oregonstate.edu)
+Kelley Engineering Center
+Oregon State University
 
+Xu Xu
+[email](xuxu@oregonstate.edu)
+Kelley Engineering Center
+Oregon State University
 
 Code Updating
 ===
