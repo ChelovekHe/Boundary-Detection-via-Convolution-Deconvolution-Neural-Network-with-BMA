@@ -16,9 +16,7 @@ This is one comparision of our network(second from left) with benchmark algorith
 ![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/compare.png)
 
 In relatively noisy background, our implementation captures too much noise. But it is due to our network doesn't using optimal configuration. You can make it better.
-Original | Ours | Benchmark | Ground Truth
------------- | ------------- | ------------- | -------------
-![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise1.png)｜![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise2.png)｜![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise3.png)｜![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise4.png)
+![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy.png)
 
 System Requirement
 ===
