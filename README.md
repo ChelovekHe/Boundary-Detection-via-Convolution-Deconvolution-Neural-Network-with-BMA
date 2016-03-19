@@ -1,17 +1,29 @@
-# Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA
+# Boundary-Detection-via-Convolution-Deconvolution-Neural-Network
 
-
-Time Schedule
+Code Description
 ===
-DEAD LINE: Mar 13
+This code was generated to implement deconvolution neural network under Theano background. We found that there was no existing code to actually implement deconvolution neural network under Theano and its extension codes, even through many papers claims that they are using convolution-deconvolution structure. The only one workable code in python is under caffe environment to solve segmentation problem, in which, they actually modified caffe foundamentally. We know that most of the computer vision research is leaded in Matlab, but, for fast training using servers, python is still the optimal choice. 
 
-Test baseline Mar 4
+Boundary detection
+===
+We used our network to do boundary detection task. The network does not apply optimal configuration in this experiment, and we only want to show the code is correct and workable. We highly suggest you modify the code to achieve your own task.
 
-Theano & Keras
+We also introduced a novel structure that can combine multiple network configurations, please see our paper in this positroy.
+[Paper](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/multi-scale-boundary-3.pdf)
 
-Loss function customization
+This is one comparision of our network(second from left) with benchmark algorithm(right most).
 
-Base model: Mar 9(Wed)
+![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/compare.png)
+
+In relatively noisy background, our implementation captures too much noise. But it is due to our network doesn't using optimal configuration. You can make it better.
+Original | Ours | Benchmark | Ground Truth
+------------ | ------------- | ------------- | -------------
+![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise1.png)｜![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise2.png)｜![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise3.png)｜![png](https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy/noise4.png)
+
+System Requirement
+===
+You need to install Theano and Cuda, that is all
+
 
 
 Code Updating
