@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Boundary-detection-via-deconvolution-neural-network by wuga214</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Boundary-detection-via-deconvolution-neural-network</h1>
+        <p class="header"></p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/wuga214">wuga214</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a id="boundary-detection-via-convolution-deconvolution-neural-network" class="anchor" href="#boundary-detection-via-convolution-deconvolution-neural-network" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Boundary-Detection-via-Convolution-Deconvolution-Neural-Network</h1>
+
+<h1>
+<a id="code-description" class="anchor" href="#code-description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code Description</h1>
+
+<p>This code was generated to implement deconvolution neural network under Theano background. We found that there was no existing code to actually implement deconvolution neural network under Theano and its extension codes, even through many papers claims that they are using convolution-deconvolution structure. The only one workable code in python is under caffe environment to solve segmentation problem, in which, they actually modified caffe foundamentally. We know that most of the computer vision research is leaded in Matlab, but, for fast training using servers, python is still the optimal choice. </p>
+
+<h1>
+<a id="boundary-detection" class="anchor" href="#boundary-detection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Boundary detection</h1>
+
+<p>We used our network to do boundary detection task. The network does not apply optimal configuration in this experiment, and we only want to show the code is correct and workable. We highly suggest you modify the code to achieve your own task.</p>
+
+<p>We also introduced a novel structure that can combine multiple network configurations, please see our paper in this positroy.
+<a href="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/multi-scale-boundary-3.pdf">Paper</a></p>
+
+<p>This is one comparision of our network(second from left) with benchmark algorithm(right most).</p>
+
+<p><img src="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/compare.png" alt="png"></p>
+
+<p>In relatively noisy background, our implementation captures too much noise. But it is due to our network doesn't using optimal configuration. You can make it better.
+<img src="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/plot/noisy.png" alt="png"></p>
+
+<h1>
+<a id="system-requirement" class="anchor" href="#system-requirement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>System Requirement</h1>
+
+<p>You need to install Theano and Cuda, that is all</p>
+
+<h1>
+<a id="contact" class="anchor" href="#contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contact</h1>
+
+<p>Ga Wu,
+<a href="wug2@oregonstate.edu">email</a>,
+Kelley Engineering Center,
+Oregon State University</p>
+
+<p>Xu Xu,
+<a href="xuxu@oregonstate.edu">email</a>,
+Kelley Engineering Center,
+Oregon State University</p>
+
+<h1>
+<a id="code-updating" class="anchor" href="#code-updating" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code Updating</h1>
+
+<p>Data Operation Code Updated[03-05-2016]</p>
+
+<ol>
+<li><p>Python can load images into memory and create list with element size : 481x321x3, This format can be directly used in Keras</p></li>
+<li>
+<p>Label data was in the form of *.mat. We extracted single ground truth from it into form of csv <a href="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/data/groundTruth/train_label_flat.txt">txt</a> </p>
+
+<p><a href="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/data/groundTruth/matlabscript.m">Matlab Script</a></p>
+</li>
+<li>CSV label file loading in python is now functional.</li>
+<li>Label reshape function works, now the data &amp; label can be directly used by keras to do prediction!</li>
+</ol>
+
+<p>Layer Code Updated[03-07-2016]</p>
+
+<ol>
+<li><p>Max Pooling layer redefined under theano environment. Now the function output maxed matrix and mask!</p></li>
+<li><p>Reversed Max Pooling layer is functional, it can recover the 'original' shape of matrix through max pooling mask saved</p></li>
+<li><p>Convolution layer is functional, just warp of con2d in theano</p></li>
+</ol>
+
+<p>Network Class Updated[03-08-2016]</p>
+
+<ol>
+<li><p>Convolution task can be worked on our code now</p></li>
+<li><p>Added Keras Backend. Now the convolution layer can accept padding!!!! </p></li>
+</ol>
+
+<p>Accelerated version of Code[03-09-2016]</p>
+
+<ol>
+<li>The code is able to run on GPU now! Max pooling and reverse pooling can run fast enough when training!</li>
+</ol>
+
+<p>Complete training and evaluating[03-10-2016]</p>
+
+<ol>
+<li><p>Forward Propagation works</p></li>
+<li><p>Loss function works(binary cross entropy)</p></li>
+<li><p>Data now in cPickle format(easier to load in correct shape)</p></li>
+<li><p>Backpropagation works, but the error function may has some glitches... Always show 100% error</p></li>
+<li><p>Code can run on Pelican server now</p></li>
+</ol>
+
+<p>Bug Free Code!!!Yeah!![03-10-2016]
+1. The code is fully functional and without any bug. Training and testing result seems encouraging!
+<img src="https://github.com/wuga214/Boundary-Detection-via-Convolution-Deconvolution-Neural-Network-with-BMA/blob/master/Conv-Deconv-Image-Process/Console.png" alt="png"></p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
